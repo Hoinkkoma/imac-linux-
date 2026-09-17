@@ -1,64 +1,45 @@
-# SSH – iMac5,1
+# Netzwerk
 
-SSH ist eine der wichtigsten Funktionen für den ganzen Aufbau. Ohne SSH wäre der iMac nur ein lokaler Kasten mit ein bisschen Technik auf der Platte. Mit SSH wird er ein echtes Server-Objekt im Heimnetz.
+Private Netzwerkadressen werden in diesem Repository nicht veröffentlicht. Die konkreten Werte gehören in eine lokale, nicht versionierte Notiz oder in einen sicheren Passwort-/Dokumentationsspeicher.
 
-## Status prüfen
+## iMac
 
-```bash
-systemctl status ssh
-ss -lntp | grep ':22'
-```
+| Parameter | Wert |
+|---|---|
+| Interface | `enp2s0` |
+| IPv4 | lokal prüfen, nicht öffentlich dokumentieren |
+| MAC | lokal prüfen, nicht öffentlich dokumentieren |
+| Hostname | `debian-it` |
 
-SSH wurde als laufender Dienst auf Port 22 dokumentiert.
+## LXC-Netz
 
-## Verbindung aus dem LAN
-
-```bash
-ssh it@192.168.80.138
-```
-
-## SSH-Key
-
-Für den Benutzer `it` wurde ein ED25519-Schlüsselpaar dokumentiert:
-
-```text
-/home/it/.ssh/id_ed25519
-/home/it/.ssh/id_ed25519.pub
-```
-
-Erzeugen:
+Die LXC-Bridge und ihre private Adresse werden nur lokal dokumentiert. Prüfen mit:
 
 ```bash
-ssh-keygen -t ed25519
+ip addr show lxcbr0
 ```
 
-Prüfen:
+## Homelab / Tailscale
+
+Die konkreten Tailscale-Adressen der Homelab-Systeme werden nicht im öffentlichen Repository gespeichert. Vor Änderungen lokal mit `tailscale status` und `tailscale ip -4` bestätigen.
+
+## Netzwerkdiagnose
 
 ```bash
-ls -la ~/.ssh
-ssh-keygen -lf ~/.ssh/id_ed25519.pub
+ip addr
+ip route
+ping -c 3 <lokales-gateway>
+ss -lntup
 ```
 
-## Public Key verteilen
+## Tailscale-Diagnose
 
-Der Public Key wird auf das Zielsystem verteilt, nicht auf dem iMac selbst:
+Auf einem System mit Tailscale:
 
 ```bash
-ssh-copy-id <user>@<ziel>
+tailscale status
+tailscale ip -4
+tailscale netcheck
 ```
 
-Oder ganz manuell:
-
-```bash
-cat ~/.ssh/id_ed25519.pub | ssh <user>@<ziel> 'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys'
-```
-
-## Ein paar gute Gewohnheiten
-
-- keine Passwörter in Scripts speichern
-- für Automatisierung eigene Schlüssel verwenden
-- bei Monitoring-SSH `BatchMode=yes` nutzen
-- Host Keys nicht mit `StrictHostKeyChecking=no` deaktivieren, außer in bewusst isolierten Tests
-- Root-SSH nur nach Prüfung und aus nachvollziehbarer Sicherheitslogik freigeben
-
-Kurz gesagt: SSH ist genial, aber nur dann, wenn man es sauber und verantwortungsvoll einrichtet.
+Vor öffentlichen Portweiterleitungen prüfen, ob der Zugriff sicher über das private Overlay-Netzwerk gelöst werden kann.

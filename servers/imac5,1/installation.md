@@ -1,54 +1,81 @@
-# Apple iMac5,1 – Lightweight Debian Server
+# Installation – iMac5,1
 
-Der iMac5,1 aus dem Jahr 2006 ist hier nicht als Retro-Desktop gedacht, sondern als kleiner, effizienter Linux-Server. Das ist ein klassischer „alte Hardware, neue Aufgabe“-Fall: wenig RAM, wenig Power, aber trotzdem nützlich genug für SSH, Monitoring, Statusanzeige und kleine Dienste.
+## Ausgangspunkt
 
-## Ziel
+Der iMac wurde in der Vergangenheit als normaler Linux-Arbeitsplatz betrieben und danach auf einen Serverbetrieb umgebaut. Das heißt: Die Installation war nicht von Anfang an „sauber wie neu“, sondern eher ein schrittweiser Umbau.
 
-Der Server soll möglichst schlank laufen:
+## Erstes Prüfprogramm
 
-- keine komplette Desktop-Umgebung
-- keine unnötigen Hintergrunddienste
-- Remote-Administration statt lokalem Desktopbetrieb
-- niedriger RAM-Verbrauch
-- möglichst wenig Ballast, aber genug Funktionen für das Homelab
+Vor Änderungen und vor jeder kleinen „Wartung“ sollte man kurz alles abfragen, was man als Basis braucht:
 
-## Hardware
+```bash
+hostnamectl
+cat /etc/os-release
+uname -a
+lscpu
+free -h
+lsblk
+ip addr
+ip route
+```
 
-| Komponente | Wert |
-|---|---|
-| Modell | Apple iMac5,1 |
-| CPU | Intel Core 2 Duo T7400 @ 2.16 GHz |
-| RAM | 2 GB DDR2-667 (2 × 1 GB) |
-| DMI-Maximum | 4 GB |
-| Disk | ST3250824AS_Q, ca. 232.9 GiB |
-| Architektur | x86_64 |
-| Netzwerk | `enp2s0` Ethernet |
-| MAC | `00:17:f2:c5:b9:e9` |
-| Hostname | `debian-it` |
-| LAN-IP | `192.168.80.138` |
+Typischer dokumentierter Stand:
 
-## Betriebssystem
+```text
+Debian GNU/Linux 11 (bullseye)
+Kernel 5.10.0-32-amd64
+x86_64
+```
 
-- Debian GNU/Linux 11 (Bullseye)
-- Kernel: `5.10.0-32-amd64`
-- Target: `multi-user.target`
+## Server-Target statt Desktop-Login
 
-> Das ist der zuletzt dokumentierte Stand. Vor einer Änderung immer kurz mit `hostnamectl`, `uname -a`, `free -h`, `lsblk` und `ip addr` prüfen.
+Damit der iMac nicht mit einem grafischen Login hochfährt, sollte das Standardziel auf `multi-user.target` stehen:
 
-## Rollen
+```bash
+systemctl get-default
+systemctl set-default multi-user.target
+```
 
-Der iMac ist vorgesehen für:
+Das ist für einen Server, der nur noch Admin-Zwecken und Hintergrundfunktionen dienen soll, die passende Variante.
 
-- SSH-Fernverwaltung
-- Cockpit-Webverwaltung
-- leichte Systemdienste
-- Wake-on-LAN
-- optionale LXC-Nutzung
-- lokales Statusdisplay „DIE SCHWARZE TAFEL“
-- später: Anzeige des Zustands weiterer Homelab-Systeme
+## Desktop-Stack entfernen
+
+Im Projekt wurden unter anderem LightDM und verschiedene LXDE/Openbox-Komponenten entfernt. Danach wurde `apt autoremove` genutzt, um nicht mehr benötigte Pakete zu bereinigen.
+
+Vor dem Purge lieber eine kleine Abhängigkeitsprüfung machen:
+
+```bash
+apt remove <paket>
+apt autoremove --dry-run
+```
+
+Und erst dann wirklich bereinigen:
+
+```bash
+apt autoremove --purge
+```
+
+## Netzwerk
+
+Aktive Schnittstelle:
+
+```text
+enp2s0
+```
+
+Die konkrete LAN-Adresse wird aus Sicherheitsgründen nicht in diesem öffentlichen Dokumentationsstand veröffentlicht.
+
+Vor jeder Netzwerkanpassung kurz prüfen:
+
+```bash
+ip addr show enp2s0
+ip route
+systemctl is-active NetworkManager
+systemctl is-enabled NetworkManager
+```
+
+Das ist wichtig, weil man bei alter Hardware schnell in einen schönen Fall von „funktioniert im Prinzip, aber plötzlich nicht mehr aus der Ferne“ gerät.
 
 ## Grundsatz
 
-Der Server soll grundsätzlich so wenig wie möglich für sich selbst verbrauchen. Deshalb werden Desktop-, Multimedia- und Consumer-Dienste nur dann behalten, wenn sie wirklich gebraucht werden.
-
-So einfach wie möglich, aber nicht zu einfach.
+Wenn man einen alten Rechner für Serverzwecke umrüstet, sollte man nicht nur ein Paket nach dem anderen löschen. Das Gerät muss stabil bleiben, erreichbar bleiben und im Ernstfall wieder sauber erreichbar sein.

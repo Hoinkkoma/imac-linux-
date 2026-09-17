@@ -1,68 +1,66 @@
-# Dienste – iMac5,1
+# SSH – iMac5,1
 
-Das System ist bewusst klein gehalten. Der iMac soll nicht zu einem „Diensteschrank voller Zufallssoftware“ werden. Deshalb ist der Sinn hinter den Services klar: ein paar wichtige Funktionen, keine unnötige Betriebsamkeit.
+SSH ist eine der wichtigsten Funktionen für den ganzen Aufbau. Ohne SSH wäre der iMac nur ein lokaler Kasten mit ein bisschen Technik auf der Platte. Mit SSH wird er ein echtes Server-Objekt im Heimnetz.
 
-## Kerndienste / Funktionen
-
-| Funktion | Zweck | Port / Hinweis |
-|---|---|---|
-| SSH | Remote-Administration | TCP 22 |
-| Cockpit | Webverwaltung | TCP 9090, HTTPS |
-| Nginx | optionaler Webserver | projektspezifisch |
-| smartd | HDD-SMART-Überwachung | kein externer Port |
-| cron | zeitgesteuerte Aufgaben | kein externer Port |
-| rsyslog | lokale Logs | kein externer Port |
-| systemd-timesyncd | Zeitsynchronisation | kein eigener Listener erforderlich |
-
-## Bereits entfernt oder deaktiviert
-
-Im Verlauf des Projekts wurden unter anderem diese Dinge beseitigt oder deaktiviert:
-
-- Bluetooth
-- ofono
-- dundee
-- Avahi
-- ModemManager
-- PackageKit
-- Exim4
-- rtkit
-- LightDM
-- verschiedene LXDE/Openbox-Reste
-- mehrere nicht mehr benötigte Desktop-/Multimedia-Pakete
-
-Das ist kein „alles weg damit“-Mantra, sondern eher die logische Folge aus dem Wunsch, ein kleines, stabiles Server-Setup zu bauen.
-
-## Vorsicht bei Netzwerkdiensten
-
-Ein wichtiger Hinweis: Es gab schon einmal einen Zwischenstand, in dem `NetworkManager` aktiv war, während gleichzeitig `ifupdown`-Konfigurationen benutzt wurden. Das ist ein klassischer Bereich, in dem man mit gezielten Prüfungen aufpassen muss.
+## Status prüfen
 
 ```bash
-systemctl is-active NetworkManager
-systemctl is-enabled NetworkManager
-nmcli device status
-ip addr
-ip route
+systemctl status ssh
+ss -lntp | grep ':22'
 ```
 
-## Audio und Desktop-Reste
+SSH wurde als laufender Dienst auf Port 22 dokumentiert.
 
-Manchmal bleiben bei einem Serverumbau noch Dinge zurück, die man nicht sofort als problematisch erkennt. Zum Beispiel PulseAudio, PipeWire oder GVFS.
+## Verbindung aus dem LAN
+
+Die konkrete Zieladresse wird hier absichtlich nicht veröffentlicht. Verwende beim Zugriff den lokalen Hostnamen oder eine private Adresse aus deiner eigenen Umgebung:
+
+```bash
+ssh it@<imac-hostname-oder-private-ip>
+```
+
+## SSH-Key
+
+Für den Benutzer `it` wurde ein ED25519-Schlüsselpaar dokumentiert:
+
+```text
+/home/it/.ssh/id_ed25519
+/home/it/.ssh/id_ed25519.pub
+```
+
+Erzeugen:
+
+```bash
+ssh-keygen -t ed25519
+```
 
 Prüfen:
 
 ```bash
-dpkg -l | grep -E 'pulseaudio|pipewire|gvfs'
-ps aux | grep -E 'pulseaudio|pipewire|gvfs'
+ls -la ~/.ssh
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
 ```
 
-Wenn man schon etwas bereinigt hat, ist genau dieses Nachprüfen wichtig, damit man keine „ghost packages“ oder Prozesse im Hintergrund übrig lässt.
+## Public Key verteilen
 
-## Laufende Dienste vollständig prüfen
+Der Public Key wird auf das Zielsystem verteilt, nicht auf dem iMac selbst:
 
 ```bash
-systemctl list-units --type=service --state=running
-systemctl list-unit-files --state=enabled
-systemctl --failed
+ssh-copy-id <user>@<ziel>
 ```
 
-Je weniger Ballast, desto leichter wird die Fehlersuche später.
+Oder ganz manuell:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh <user>@<ziel> 'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys'
+```
+
+## Ein paar gute Gewohnheiten
+
+- keine Passwörter in Scripts speichern
+- für Automatisierung eigene Schlüssel verwenden
+- bei Monitoring-SSH `BatchMode=yes` nutzen
+- Host Keys nicht mit `StrictHostKeyChecking=no` deaktivieren, außer in bewusst isolierten Tests
+- Root-SSH nur nach Prüfung und aus nachvollziehbarer Sicherheitslogik freigeben
+
+Kurz gesagt: SSH ist genial, aber nur dann, wenn man es sauber und verantwortungsvoll einrichtet.

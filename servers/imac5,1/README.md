@@ -1,73 +1,54 @@
-# Homelab Documentation
+# Apple iMac5,1 – Lightweight Debian Server
 
-Das hier ist meine kleine, möglichst ehrliche Dokumentation für ein privates Homelab mit Fokus auf einen älteren iMac als Linux-Server, Proxmox, Tailscale und ein paar zentralen Diensten im Keller/Heimnetzwerk.
+Der iMac5,1 aus dem Jahr 2006 ist hier nicht als Retro-Desktop gedacht, sondern als kleiner, effizienter Linux-Server. Das ist ein klassischer „alte Hardware, neue Aufgabe“-Fall: wenig RAM, wenig Power, aber trotzdem nützlich genug für SSH, Monitoring, Statusanzeige und kleine Dienste.
 
-Ich schreibe das nicht als perfekt dokumentiertes Produktionssystem, sondern als laufende Sammlung von Dingen, die ich tatsächlich geprüft habe, was geplant ist und was vor Änderungen noch einmal sauber überprüft werden sollte.
+## Ziel
 
-## Überblick
+Der Server soll möglichst schlank laufen:
 
-| System | Funktion | Status |
-|---|---|---|
-| iMac5,1 | Lightweight Debian Server / Statusanzeige | In Entwicklung |
-| Proxmox `pve` | Virtualisierung / Container / Docker | Produktiv |
-| Debian Monitoring Server | Monitoring, Homepage und zentrale Dienste | Produktiv |
+- keine komplette Desktop-Umgebung
+- keine unnötigen Hintergrunddienste
+- Remote-Administration statt lokalem Desktopbetrieb
+- niedriger RAM-Verbrauch
+- möglichst wenig Ballast, aber genug Funktionen für das Homelab
 
-## Grundidee
+## Hardware
 
-Dieses Projekt ist bewusst praktisch gehalten:
+| Komponente | Wert |
+|---|---|
+| Modell | Apple iMac5,1 |
+| CPU | Intel Core 2 Duo T7400 @ 2.16 GHz |
+| RAM | 2 GB DDR2-667 (2 × 1 GB) |
+| DMI-Maximum | 4 GB |
+| Disk | ST3250824AS_Q, ca. 232.9 GiB |
+| Architektur | x86_64 |
+| Netzwerk | Ethernet über `enp2s0` |
+| MAC | nicht öffentlich dokumentieren |
+| Hostname | `debian-it` |
+| LAN-IP | nicht öffentlich dokumentieren |
 
-- alte Hardware wiederverwenden
-- Ressourcen sparen statt fancy Desktop-Gedöns
-- klare Trennung zwischen „bestätigt“, „geplant“ und „prüfen“
-- alles dokumentieren, damit man später nicht im Dunkeln steht
+## Betriebssystem
 
-## Dokumentationsprinzip
+- Debian GNU/Linux 11 (Bullseye)
+- Kernel: `5.10.0-32-amd64`
+- Target: `multi-user.target`
 
-- **bestätigt**: Der Zustand wurde im Verlauf des Projekts tatsächlich geprüft oder als konfiguriert dokumentiert.
-- **geplant**: Das ist der gewünschte Zustand, aber noch nicht vollständig umgesetzt.
-- **prüfen**: Das war einmal ein Stand, aber vor Änderungen unbedingt erneut kontrollieren.
+> Das ist der zuletzt dokumentierte Stand. Vor einer Änderung immer kurz mit `hostnamectl`, `uname -a`, `free -h`, `lsblk` und `ip addr` prüfen.
 
-## Inhaltsverzeichnis
+## Rollen
 
-- [iMac5,1](servers/imac5,1/README.md)
-- [iMac Installation](servers/imac5,1/installation.md)
-- [iMac Optimierung](servers/imac5,1/optimization.md)
-- [iMac Dienste](servers/imac5,1/services.md)
-- [iMac SSH](servers/imac5,1/ssh.md)
-- [Wake-on-LAN](servers/imac5,1/wake-on-lan.md)
-- [LXC](servers/imac5,1/lxc.md)
-- [DIE SCHWARZE TAFEL](servers/imac5,1/dashboard.md)
-- [Proxmox](servers/proxmox/README.md)
-- [Monitoring](servers/monitoring/README.md)
-- [Netzwerk](network/README.md)
-- [Sicherheit](security/README.md)
-- [Betrieb und Wartung](operations/README.md)
-- [Scripts](scripts/README.md)
-- [Changelog](CHANGELOG.md)
+Der iMac ist vorgesehen für:
 
-## Warum das alles?
+- SSH-Fernverwaltung
+- Cockpit-Webverwaltung
+- leichte Systemdienste
+- Wake-on-LAN
+- optionale LXC-Nutzung
+- lokales Statusdisplay „DIE SCHWARZE TAFEL“
+- später: Anzeige des Zustands weiterer Homelab-Systeme
 
-Der iMac ist nicht der übliche „schöner Rechner“, sondern eher ein leiser Hintergrundarbeiter im Heimnetz. Er soll:
+## Grundsatz
 
-- stabil laufen
-- wenig RAM fressen
-- fernadministisch nutzbar sein
-- als Statusanzeige dienen
-- das Homelab sauber mit kleinen Services unterstützen
+Der Server soll grundsätzlich so wenig wie möglich für sich selbst verbrauchen. Deshalb werden Desktop-, Multimedia- und Consumer-Dienste nur dann behalten, wenn sie wirklich gebraucht werden.
 
-Wenn etwas hier nicht perfekt ist, ist das okay. Das Projekt soll eher nützlich und verständlich sein als akademisch sauber.
-
-## Hinweis zur praktischen Nutzung
-
-Vor größeren Änderungen immer kurz prüfen:
-
-```bash
-hostnamectl
-uname -a
-free -h
-lsblk
-ip addr
-systemctl --failed
-```
-
-Wenn man etwas im System ändert, sollte man nicht blind nach „glaub ich ist das ok" handeln. Hier gilt: kurz prüfen, dokumentieren, dann ändern.
+So einfach wie möglich, aber nicht zu einfach.
