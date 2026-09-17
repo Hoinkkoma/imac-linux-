@@ -1,36 +1,73 @@
-# Apple iMac5,1 – Lightweight Debian Server
+# Homelab Documentation
 
-## Ziel
+Das hier ist meine kleine, möglichst ehrliche Dokumentation für ein privates Homelab mit Fokus auf einen älteren iMac als Linux-Server, Proxmox, Tailscale und ein paar zentralen Diensten im Keller/Heimnetzwerk.
 
-Der iMac5,1 aus dem Jahr 2006 wird als ressourcensparender Linux-Server weiterverwendet. Der Fokus liegt auf einem schlanken System ohne klassische Desktopumgebung, Fernverwaltung und niedriger RAM-Auslastung.
+Ich schreibe das nicht als perfekt dokumentiertes Produktionssystem, sondern als laufende Sammlung von Dingen, die ich tatsächlich geprüft habe, was geplant ist und was vor Änderungen noch einmal sauber überprüft werden sollte.
 
-## Hardware
+## Überblick
 
-| Komponente | Wert |
-|---|---|
-| Modell | Apple iMac5,1 |
-| CPU | Intel Core 2 Duo T7400 @ 2.16 GHz |
-| RAM | 2 GB DDR2-667 (2 × 1 GB) |
-| DMI-Maximum | 4 GB |
-| Disk | ST3250824AS_Q, ca. 232.9 GiB |
-| Architektur | x86_64 |
-| Netzwerk | `enp2s0` Ethernet |
-| MAC | `00:17:f2:c5:b9:e9` |
-| Hostname | `debian-it` |
-| LAN-IP | `192.168.80.138` |
+| System | Funktion | Status |
+|---|---|---|
+| iMac5,1 | Lightweight Debian Server / Statusanzeige | In Entwicklung |
+| Proxmox `pve` | Virtualisierung / Container / Docker | Produktiv |
+| Debian Monitoring Server | Monitoring, Homepage und zentrale Dienste | Produktiv |
 
-## Betriebssystem
+## Grundidee
 
-- Debian GNU/Linux 11 (Bullseye)
-- Kernel: `5.10.0-32-amd64`
-- Standard-Target: `multi-user.target`
+Dieses Projekt ist bewusst praktisch gehalten:
 
-Vor Änderungen mit `hostnamectl`, `uname -a`, `free -h`, `lsblk` und `ip addr` verifizieren.
+- alte Hardware wiederverwenden
+- Ressourcen sparen statt fancy Desktop-Gedöns
+- klare Trennung zwischen „bestätigt“, „geplant“ und „prüfen“
+- alles dokumentieren, damit man später nicht im Dunkeln steht
 
-## Rollen
+## Dokumentationsprinzip
 
-SSH-Fernverwaltung, Cockpit, leichte Systemdienste, Wake-on-LAN, optionale LXC-Nutzung und das lokale Statusdisplay **DIE SCHWARZE TAFEL**.
+- **bestätigt**: Der Zustand wurde im Verlauf des Projekts tatsächlich geprüft oder als konfiguriert dokumentiert.
+- **geplant**: Das ist der gewünschte Zustand, aber noch nicht vollständig umgesetzt.
+- **prüfen**: Das war einmal ein Stand, aber vor Änderungen unbedingt erneut kontrollieren.
 
-## Grundsatz
+## Inhaltsverzeichnis
 
-Nicht benötigte Desktop-, Multimedia- und Consumer-Dienste werden entfernt oder deaktiviert, sofern sie nicht von einer benötigten Funktion abhängen.
+- [iMac5,1](servers/imac5,1/README.md)
+- [iMac Installation](servers/imac5,1/installation.md)
+- [iMac Optimierung](servers/imac5,1/optimization.md)
+- [iMac Dienste](servers/imac5,1/services.md)
+- [iMac SSH](servers/imac5,1/ssh.md)
+- [Wake-on-LAN](servers/imac5,1/wake-on-lan.md)
+- [LXC](servers/imac5,1/lxc.md)
+- [DIE SCHWARZE TAFEL](servers/imac5,1/dashboard.md)
+- [Proxmox](servers/proxmox/README.md)
+- [Monitoring](servers/monitoring/README.md)
+- [Netzwerk](network/README.md)
+- [Sicherheit](security/README.md)
+- [Betrieb und Wartung](operations/README.md)
+- [Scripts](scripts/README.md)
+- [Changelog](CHANGELOG.md)
+
+## Warum das alles?
+
+Der iMac ist nicht der übliche „schöner Rechner“, sondern eher ein leiser Hintergrundarbeiter im Heimnetz. Er soll:
+
+- stabil laufen
+- wenig RAM fressen
+- fernadministisch nutzbar sein
+- als Statusanzeige dienen
+- das Homelab sauber mit kleinen Services unterstützen
+
+Wenn etwas hier nicht perfekt ist, ist das okay. Das Projekt soll eher nützlich und verständlich sein als akademisch sauber.
+
+## Hinweis zur praktischen Nutzung
+
+Vor größeren Änderungen immer kurz prüfen:
+
+```bash
+hostnamectl
+uname -a
+free -h
+lsblk
+ip addr
+systemctl --failed
+```
+
+Wenn man etwas im System ändert, sollte man nicht blind nach „glaub ich ist das ok" handeln. Hier gilt: kurz prüfen, dokumentieren, dann ändern.

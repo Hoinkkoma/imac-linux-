@@ -1,33 +1,64 @@
-# Netzwerk
+# SSH – iMac5,1
 
-## iMac
+SSH ist eine der wichtigsten Funktionen für den ganzen Aufbau. Ohne SSH wäre der iMac nur ein lokaler Kasten mit ein bisschen Technik auf der Platte. Mit SSH wird er ein echtes Server-Objekt im Heimnetz.
 
-| Parameter | Wert |
-|---|---|
-| Interface | `enp2s0` |
-| IPv4 | `192.168.80.138/24` |
-| MAC | `00:17:f2:c5:b9:e9` |
-| Hostname | `debian-it` |
-
-## LXC und Tailscale
-
-`lxcbr0 = 10.0.3.1/24`
-
-| System | Tailscale |
-|---|---|
-| Debian Monitoring Server | `100.113.28.9` |
-| Proxmox pve | `100.83.105.59` |
-
-Vor Änderungen mit `tailscale status` bestätigen.
+## Status prüfen
 
 ```bash
-ip addr
-ip route
-ping -c 3 192.168.80.1
-ss -lntup
-tailscale status
-tailscale ip -4
-tailscale netcheck
+systemctl status ssh
+ss -lntp | grep ':22'
 ```
 
-Vor öffentlichen Portweiterleitungen prüfen, ob der Zugriff sicher über das private Overlay-Netz gelöst werden kann.
+SSH wurde als laufender Dienst auf Port 22 dokumentiert.
+
+## Verbindung aus dem LAN
+
+```bash
+ssh it@192.168.80.138
+```
+
+## SSH-Key
+
+Für den Benutzer `it` wurde ein ED25519-Schlüsselpaar dokumentiert:
+
+```text
+/home/it/.ssh/id_ed25519
+/home/it/.ssh/id_ed25519.pub
+```
+
+Erzeugen:
+
+```bash
+ssh-keygen -t ed25519
+```
+
+Prüfen:
+
+```bash
+ls -la ~/.ssh
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Public Key verteilen
+
+Der Public Key wird auf das Zielsystem verteilt, nicht auf dem iMac selbst:
+
+```bash
+ssh-copy-id <user>@<ziel>
+```
+
+Oder ganz manuell:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh <user>@<ziel> 'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys'
+```
+
+## Ein paar gute Gewohnheiten
+
+- keine Passwörter in Scripts speichern
+- für Automatisierung eigene Schlüssel verwenden
+- bei Monitoring-SSH `BatchMode=yes` nutzen
+- Host Keys nicht mit `StrictHostKeyChecking=no` deaktivieren, außer in bewusst isolierten Tests
+- Root-SSH nur nach Prüfung und aus nachvollziehbarer Sicherheitslogik freigeben
+
+Kurz gesagt: SSH ist genial, aber nur dann, wenn man es sauber und verantwortungsvoll einrichtet.

@@ -1,36 +1,72 @@
-# Betrieb und Wartung
+# Sicherheit
 
-## Schnellcheck
+Der iMac ist eine alte Maschine mit kleinem Ressourcenbudget. Genau deshalb ist Sicherheit hier keine Frage von „glaub ich mach ich mal schnell“ – sondern ein echtes Grundprinzip. Kein System ist automatisch sicher nur weil es privat ist.
 
-```bash
-hostnamectl
-uptime
-free -h
-df -h
-ip addr
-systemctl --failed
-systemctl list-units --type=service --state=running
-```
+## SSH
 
-## Ressourcen und Festplatte
+Empfehlungen:
 
-```bash
-free -h
-ps aux --sort=-%mem | head -20
-ps aux --sort=-%cpu | head -20
-iostat
-smartctl -a /dev/sda
-df -h
-```
+- Schlüssel statt Passwörter für Automatisierung
+- kein ungeschütztes Root-Login
+- Firewall-Regeln möglichst auf die benötigten Netze begrenzen
+- Logs regelmäßig prüfen
 
-## Logs
+Prüfen:
 
 ```bash
-journalctl -u ssh --since today
-journalctl -u cockpit.socket --since today
-journalctl -p warning..alert -b
+ss -lntp
+journalctl -u ssh --no-pager -n 100
 ```
 
-Vor Neustart `uptime` und `systemctl --failed` prüfen. Danach SSH, Fehler und Swap kontrollieren. Bei Netzwerk- oder Bootänderungen immer eine zweite Zugriffsmöglichkeit bereithalten.
+## Netzwerkexposition
 
-Nach relevanten Änderungen: Zustand prüfen, Dokumentation aktualisieren, Commit erstellen und pushen.
+Nicht benötigte Ports sollten nicht offen sein.
+
+```bash
+ss -lntup
+```
+
+Jeder Listener sollte zu einer klar dokumentierten Funktion gehören. Wenn das nicht der Fall ist, ist man im Zweifel schon zu weit gegangen.
+
+## Secrets
+
+Nie in Git committen:
+
+- private SSH-Keys
+- API-Tokens
+- Passwörter
+- Tailscale Auth Keys
+- Cookies / Sessiondaten
+- `.env` mit Geheimnissen
+
+Empfohlene `.gitignore`-Einträge:
+
+```gitignore
+.env
+*.key
+*.pem
+id_rsa
+id_ed25519
+id_ed25519.pub
+secrets/
+credentials/
+```
+
+Der öffentliche SSH-Key darf dokumentiert werden. Der private Schlüssel nicht.
+
+## Updates
+
+Vor produktiven Änderungen:
+
+```bash
+apt update
+apt list --upgradable
+```
+
+Updates immer erst auf Verfügbarkeit und mögliche Auswirkungen prüfen. Nach Kernel- oder Netzwerkänderungen einen kontrollierten Neustart einplanen.
+
+## Backup
+
+Konfigurationsdateien und wichtige Einstellungen sollten versioniert oder anderweitig gesichert werden. Das Git-Repository ist Dokumentation, aber kein Ersatz für ein ernsthaftes Backup der Systeme.
+
+Bei Homelab-Setups gilt: Das Risiko entsteht oft nicht durch einen wilden Ausfall, sondern durch das „Ach, das war eh nur eine kleine Änderung“-Problem.

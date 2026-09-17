@@ -1,44 +1,54 @@
-# Installation – iMac5,1
+# Apple iMac5,1 – Lightweight Debian Server
 
-## System prüfen
+Der iMac5,1 aus dem Jahr 2006 ist hier nicht als Retro-Desktop gedacht, sondern als kleiner, effizienter Linux-Server. Das ist ein klassischer „alte Hardware, neue Aufgabe“-Fall: wenig RAM, wenig Power, aber trotzdem nützlich genug für SSH, Monitoring, Statusanzeige und kleine Dienste.
 
-```bash
-hostnamectl
-cat /etc/os-release
-uname -a
-lscpu
-free -h
-lsblk
-ip addr
-ip route
-```
+## Ziel
 
-Erwarteter dokumentierter Stand: Debian GNU/Linux 11 (Bullseye), Kernel `5.10.0-32-amd64`, `x86_64`.
+Der Server soll möglichst schlank laufen:
 
-## Server-Target
+- keine komplette Desktop-Umgebung
+- keine unnötigen Hintergrunddienste
+- Remote-Administration statt lokalem Desktopbetrieb
+- niedriger RAM-Verbrauch
+- möglichst wenig Ballast, aber genug Funktionen für das Homelab
 
-```bash
-systemctl get-default
-systemctl set-default multi-user.target
-```
+## Hardware
 
-Der iMac soll ohne grafische Login-Umgebung starten. Vor jedem weiteren Purge Abhängigkeiten prüfen:
+| Komponente | Wert |
+|---|---|
+| Modell | Apple iMac5,1 |
+| CPU | Intel Core 2 Duo T7400 @ 2.16 GHz |
+| RAM | 2 GB DDR2-667 (2 × 1 GB) |
+| DMI-Maximum | 4 GB |
+| Disk | ST3250824AS_Q, ca. 232.9 GiB |
+| Architektur | x86_64 |
+| Netzwerk | `enp2s0` Ethernet |
+| MAC | `00:17:f2:c5:b9:e9` |
+| Hostname | `debian-it` |
+| LAN-IP | `192.168.80.138` |
 
-```bash
-apt remove <paket>
-apt autoremove --dry-run
-apt autoremove --purge
-```
+## Betriebssystem
 
-## Netzwerk
+- Debian GNU/Linux 11 (Bullseye)
+- Kernel: `5.10.0-32-amd64`
+- Target: `multi-user.target`
 
-Aktive Ethernet-Schnittstelle: `enp2s0`; dokumentierte Adresse: `192.168.80.138/24`.
+> Das ist der zuletzt dokumentierte Stand. Vor einer Änderung immer kurz mit `hostnamectl`, `uname -a`, `free -h`, `lsblk` und `ip addr` prüfen.
 
-```bash
-ip addr show enp2s0
-ip route
-systemctl is-active NetworkManager
-systemctl is-enabled NetworkManager
-```
+## Rollen
 
-Netzwerkänderungen nicht blind durchführen.
+Der iMac ist vorgesehen für:
+
+- SSH-Fernverwaltung
+- Cockpit-Webverwaltung
+- leichte Systemdienste
+- Wake-on-LAN
+- optionale LXC-Nutzung
+- lokales Statusdisplay „DIE SCHWARZE TAFEL“
+- später: Anzeige des Zustands weiterer Homelab-Systeme
+
+## Grundsatz
+
+Der Server soll grundsätzlich so wenig wie möglich für sich selbst verbrauchen. Deshalb werden Desktop-, Multimedia- und Consumer-Dienste nur dann behalten, wenn sie wirklich gebraucht werden.
+
+So einfach wie möglich, aber nicht zu einfach.
