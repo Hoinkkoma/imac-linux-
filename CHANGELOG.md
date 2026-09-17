@@ -1,14 +1,9 @@
 # Changelog
 
-## 2026-09 – Server-Umbau
+Alle relevanten Änderungen an der Dokumentation werden hier kurz festgehalten.
 
-- iMac5,1 als Debian-Server dokumentiert
-- Desktopbetrieb auf `multi-user.target` umgestellt
-- LightDM und Desktopreste entfernt
-- RAM-Tuning und ZRAM dokumentiert
-- SSH, Cockpit, Wake-on-LAN und SMART-Überwachung dokumentiert
-- nicht benötigte Consumer-Dienste entfernt/deaktiviert
-- CMatrix für das spätere Terminal-Dashboard installiert
-- Konzept „DIE SCHWARZE TAFEL“ definiert
+## 2026-09-17
 
-Der Changelog beschreibt Projektstände und keine vollständige Paket-Historie. Für reproduzierbare Builds sollten zusätzlich Paketlisten und Konfigurationsdateien versioniert werden.
+- Repository-Struktur an die Homelab-Dokumentation angeglichen.
+- Kategorien für Debian, Netzwerk, Dienste, Sicherheit, Wartung und Fehlerbehebung ergänzt.
+- Root-README als zentrale Startseite mit Quick Start und Infrastrukturübersicht neu aufgebaut.

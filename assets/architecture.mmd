@@ -1,0 +1,9 @@
+```mermaid
+graph LR
+    LAN["Homelab LAN"] --> IMAC["Apple iMac5,1"]
+    IMAC --> SSH["SSH"]
+    IMAC --> COCKPIT["Cockpit"]
+    IMAC --> DASH["DIE SCHWARZE TAFEL"]
+    IMAC -.-> LXC["optionale LXC-Workloads"]
+    IMAC -.-> MON["Monitoring"]
+```
