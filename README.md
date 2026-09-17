@@ -1,25 +1,26 @@
 # iMac5,1 Homelab-Server
 
-**Letzte Aktualisierung:** 2026-09-17 | **Maintainer:** [@Hoinkkoma](https://github.com/Hoinkkoma)
+**Letzte Aktualisierung:** 2026-09-17  
+**Maintainer:** [@Hoinkkoma](https://github.com/Hoinkkoma)
 
-Moin Moin Leude, schön, dass ihr hier seid. In diesem Repository dokumentiere ich den Apple iMac5,1 als schlanken Debian-Server für mein Homelab. Hier findet ihr Informationen zur Hardware, Installation, Netzwerk, Diensten, Sicherheit und zum laufenden Betrieb.
+Moin Moin Leude, schön, dass ihr hier seid. Dieses Repository dokumentiert meinen Apple iMac5,1 als schlanken Debian-Server für das Homelab.
 
----
-
-## Quick Start
-
-| Bereich | Link | Kurzbeschreibung |
-|:---:|---|---|
-| **Debian-System** | [`Debian/`](./Debian/) | Installation, Optimierung und Systembetrieb |
-| **Server** | [`servers/imac5,1/`](./servers/imac5,1/) | Hardwareprofil und iMac-spezifische Anleitungen |
-| **Netzwerk** | [`Netzwerk/`](./Netzwerk/) | Ethernet, LXC, Tailscale und Diagnose |
-| **Dienste** | [`Dienste/`](./Dienste/) | SSH, Cockpit, Dashboard und optionale Dienste |
-| **Sicherheit** | [`Sicherheit/`](./Sicherheit/) | SSH-Härtung, Secrets, Updates und Backup |
-| **Wartung** | [`Wartung/`](./Wartung/) | Checklisten, Backups und regelmäßige Aufgaben |
-| **Fehlerbehebung** | [`Fehlerbehebung/`](./Fehlerbehebung/) | Diagnose und Wiederherstellung |
-| **Skripte** | [`scripts/`](./scripts/) | Kleine Hilfs- und Prüfskripte |
+Die Dokumentation ist nach Aufgabenbereichen aufgebaut: System, Server, Netzwerk, Dienste, Sicherheit, Wartung und Fehlerbehebung.
 
 ---
+
+## Inhaltsübersicht
+
+| Bereich | Inhalt | Einstieg |
+|---|---|---|
+| System | Debian, Installation und Optimierung | [`Debian/`](./Debian/) |
+| Server | Hardware und iMac-spezifische Anleitungen | [`servers/imac5,1/`](./servers/imac5,1/) |
+| Netzwerk | Ethernet, LXC, Tailscale und Diagnose | [`Netzwerk/`](./Netzwerk/) |
+| Dienste | SSH, Cockpit, Dashboard und optionale Dienste | [`Dienste/`](./Dienste/) |
+| Sicherheit | Zugriffsschutz, Secrets, Updates und Backup | [`Sicherheit/`](./Sicherheit/) |
+| Wartung | Prüfungen und regelmäßige Aufgaben | [`Wartung/`](./Wartung/) |
+| Fehlerbehebung | Diagnose und Wiederherstellung | [`Fehlerbehebung/`](./Fehlerbehebung/) |
+| Hilfsmittel | Skripte und Diagramme | [`scripts/`](./scripts/) · [`assets/`](./assets/) |
 
 ## Infrastruktur-Übersicht
 
@@ -41,44 +42,82 @@ graph LR
     style MON fill:#e0f2f1
 ```
 
+Eine bearbeitbare Version des Diagramms liegt zusätzlich unter [`assets/architecture.mmd`](./assets/architecture.mmd).
+
 ## Systemprofil
 
-| Gerät | Typ | Spezifikation | Funktion | Status |
+| Gerät | Typ | Spezifikation | Aufgabe | Status |
 |---|---|---|---|---|
-| **Apple iMac5,1** | Debian-Server | Core 2 Duo T7400, 2 GB RAM, 232.9 GiB Disk | Remote-Administration, leichte Dienste, Statusanzeige | In Entwicklung |
+| Apple iMac5,1 | Debian-Server | Intel Core 2 Duo T7400, 2 GB RAM, ca. 232,9 GiB Disk | Remote-Administration, leichte Dienste und Statusanzeige | In Entwicklung |
 
-Private IP-Adressen, MAC-Adressen und Zugangsdaten werden nicht in diesem Repository veröffentlicht.
+| Systemstand | Wert |
+|---|---|
+| Betriebssystem | Debian GNU/Linux 11 (Bullseye) |
+| Kernel | `5.10.0-32-amd64` (zuletzt dokumentiert) |
+| Architektur | `x86_64` |
+| Hostname | `debian-it` |
+| Netzwerkinterface | `enp2s0` |
+| Systemziel | `multi-user.target` |
 
-## Dokumentationsaufbau
+Private IP-Adressen, MAC-Adressen, Passwörter, Tokens und private Schlüssel werden nicht veröffentlicht.
+
+## Dokumentationsstruktur
 
 ```text
-Debian/              Betriebssystem, Installation und Optimierung
-servers/imac5,1/     Gerätespezifische Dokumentation
-Netzwerk/            Netzwerk, LXC und Tailscale
-Dienste/             SSH, Cockpit, Dashboard und Services
-Sicherheit/          Zugriffsschutz, Secrets und Updates
-Wartung/             Regelmäßige Checks und Backup
-Fehlerbehebung/      Diagnose und Recovery
-assets/              Diagramme und weitere Ressourcen
-scripts/             Wiederverwendbare Hilfsskripte
+README.md                    Einstieg und Gesamtübersicht
+Debian/                      Betriebssystem und Systemgrundlagen
+servers/imac5,1/             Hardware und konkrete Server-Anleitungen
+  README.md                   Geräteübersicht
+  installation.md             Installation
+  optimization.md             Ressourcenoptimierung
+  services.md                 Dienste
+  ssh.md                      SSH-Fernverwaltung
+  wake-on-lan.md              Wake-on-LAN
+  lxc.md                      LXC
+  dashboard.md                DIE SCHWARZE TAFEL
+Netzwerk/                     Netzwerk und Diagnose
+Dienste/                      Dienstübersicht
+Sicherheit/                   Sicherheitsregeln
+Wartung/                      Wartung und Backups
+Fehlerbehebung/               Fehleranalyse und Recovery
+assets/                       Diagramme
+scripts/                      Hilfsskripte
+CHANGELOG.md                  Änderungshistorie
+CONTRIBUTING.md               Regeln für Beiträge
 ```
 
-Die ursprünglichen englisch benannten Verzeichnisse (`network/`, `operations/`, `security/`) bleiben als Kompatibilitätsreferenz bestehen. Neue Inhalte werden in den kategorisierten Verzeichnissen gepflegt.
+Die älteren Verzeichnisse `network/`, `operations/` und `security/` bleiben vorerst als Kompatibilitätsreferenz bestehen. Neue Inhalte gehören in die deutsch benannten Bereiche oben.
 
-## Gelesen und beachtet
+## Arbeitsablauf
 
-Wenn ihr an diesem Repository mitarbeitet, geht bitte zuerst die vorhandene Dokumentation durch. Änderungen sollen nachvollziehbar bleiben und keine unnötigen Risiken für den Server verursachen.
+1. **Orientieren:** Die passende Bereichs-README und die betroffene Server-Anleitung lesen.
+2. **Prüfen:** Den aktuellen Zustand des iMacs direkt am System verifizieren.
+3. **Ändern:** Eine kleine, nachvollziehbare Änderung durchführen.
+4. **Testen:** Dienst, Netzwerk und Ressourcenverbrauch kontrollieren.
+5. **Dokumentieren:** Anleitung und bei größeren Änderungen den `CHANGELOG.md` aktualisieren.
 
-- **bestätigt** bedeutet: Der Zustand wurde geprüft oder im Projektverlauf dokumentiert.
-- **geplant** bedeutet: Der Zustand ist gewünscht, aber noch nicht vollständig umgesetzt.
-- **prüfen** bedeutet: Die Angabe stammt aus einem älteren Stand und muss vor Änderungen erneut verifiziert werden.
-- Private IPs, MACs, Passwörter, Tokens und private Schlüssel gehören nicht in dieses Repository.
-- Vor Änderungen bitte zuerst `hostnamectl`, `uname -a`, `free -h`, `lsblk` und `ip addr` ausführen.
-- Für neue Themen bitte zuerst einen Issue anlegen.
-- Bei größeren Änderungen müssen die betroffenen Betriebsanleitungen aktualisiert werden.
+## Grundregeln
 
-Weitere Informationen findet ihr in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+- **bestätigt:** Zustand wurde geprüft oder im Projektverlauf dokumentiert.
+- **geplant:** Zustand ist gewünscht, aber noch nicht vollständig umgesetzt.
+- **prüfen:** Angabe stammt aus einem älteren Stand und muss erneut verifiziert werden.
+- Vor Änderungen zuerst ausführen:
+
+  ```bash
+  hostnamectl
+  uname -a
+  free -h
+  lsblk
+  ip addr
+  ```
+
+- Keine privaten IPs, MACs, Passwörter, Tokens oder privaten Schlüssel committen.
+- Für neue Themen zuerst einen Issue anlegen.
+- Bei größeren Änderungen die betroffenen Betriebsanleitungen aktualisieren.
+
+Weitere Informationen stehen in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ---
 
-**Status:** In Entwicklung | **Letztes Update:** 2026-09-17
+**Status:** In Entwicklung  
+**Letztes Update:** 2026-09-17

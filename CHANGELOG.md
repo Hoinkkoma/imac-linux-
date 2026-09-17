@@ -1,9 +1,8 @@
-# Changelog
-
-Alle relevanten Änderungen an der Dokumentation werden hier kurz festgehalten.
+# Change log
 
 ## 2026-09-17
 
-- Repository-Struktur an die Homelab-Dokumentation angeglichen.
-- Kategorien für Debian, Netzwerk, Dienste, Sicherheit, Wartung und Fehlerbehebung ergänzt.
-- Root-README als zentrale Startseite mit Quick Start und Infrastrukturübersicht neu aufgebaut.
+- Root-README als zentrale Startseite neu strukturiert.
+- Dokumentation in System-, Server-, Netzwerk-, Dienste-, Sicherheits-, Wartungs- und Fehlerbehebungsbereiche gegliedert.
+- Bestehendes Mermaid-Infrastrukturdiagramm beibehalten.
+- Verzeichnisübersicht und Arbeitsablauf ergänzt.
